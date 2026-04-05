@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Eleitores</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: #e0e0e0;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .required {
+            color: #e74c3c;
+            margin-left: 5px;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102,126,234,0.3);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .btn-submit, .btn-listar, .btn-print, .btn-email {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+            margin-bottom: 10px;
+        }
+        
+        .btn-submit:hover, .btn-listar:hover, .btn-print:hover, .btn-email:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+        
+        .btn-submit:active, .btn-listar:active, .btn-print:active, .btn-email:active {
+            transform: translateY(0);
+        }
+        
+        .btn-listar {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .btn-print {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .btn-email {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-group .btn-print,
+        .btn-group .btn-email {
+            flex: 1;
+            margin-bottom: 0;
+            padding: 12px;
+            font-size: 14px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .lista-eleitores {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .card-eleitor {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .card-eleitor:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .card-eleitor h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .card-eleitor p {
+            margin: 5px 0;
+            color: #555;
+        }
+        
+        .card-eleitor .data {
+            font-size: 11px;
+            color: #999;
+            margin-top: 10px;
+        }
+        
+        .btn-excluir {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        
+        .btn-excluir:hover {
+            background: #c0392b;
+        }
+        
+        .estatisticas {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .estatisticas p {
+            margin: 5px 0;
+        }
+        
+        /* Estilos para impressão */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .tabs, .btn-group, .btn-listar, .btn-excluir, .btn-print, .btn-email {
+                display: none !important;
+            }
+            
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            
+            .tab-content {
+                display: block !important;
+                padding: 0;
+            }
+            
+            .card-eleitor {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 1px solid #ddd;
+                margin-bottom: 15px;
+            }
+            
+            .header {
+                background: #667eea;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+        
+        /* Modal de e-mail */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        .modal-header h3 {
+            color: #667eea;
+        }
+        
+        .close {
+            cursor: pointer;
+            font-size: 24px;
+            color: #999;
+        }
+        
+        .close:hover {
+            color: #333;
+        }
+        
+        .email-preview {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        @media (max-width: 600px) {
+            .tab-content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 SISTEMA DE CADASTRO DE ELEITORES</h1>
+            <p>Preencha todos os campos corretamente</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="mudarAba(0)">📝 Novo Cadastro</div>
+            <div class="tab" onclick="mudarAba(1)">📋 Lista de Eleitores</div>
+            <div class="tab" onclick="mudarAba(2)">📊 Estatísticas</div>
+        </div>
+        
+        <!-- Aba 1: Cadastro -->
+        <div id="aba0" class="tab-content active">
+            <div id="alert" class="alert"></div>
+            
+            <form id="formCadastro">
+                <div class="form-group">
+                    <label>NOME COMPLETO <span class="required">*</span></label>
+                    <input type="text" id="nome" required placeholder="Digite seu nome completo">
+                    <div class="info">Digite sem abreviações</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>ENDEREÇO COMPLETO <span class="required">*</span></label>
+                    <textarea id="endereco" required placeholder="Rua, número, bairro, cidade, CEP"></textarea>
+                    <div class="info">Inclua CEP se souber</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>TELEFONE <span class="required">*</span></label>
+                    <input type="tel" id="telefone" required placeholder="(11) 99999-9999">
+                    <div class="info">Digite com DDD. Exemplo: 11999999999</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>CPF <span class="required">*</span></label>
+                    <input type="text" id="cpf" required placeholder="000.000.000-00" maxlength="14">
+                    <div class="info">Apenas números. Exemplo: 12345678901</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>TÍTULO DE ELEITOR <span class="required">*</span></label>
+                    <input type="text" id="titulo" required placeholder="0000 0000 0000" maxlength="14">
+                    <div class="info">12 dígitos. Exemplo: 123456789012</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>NOME DE QUEM ESTÁ CADASTRANDO <span class="required">*</span></label>
+                    <input type="text" id="cadastrador" required placeholder="Seu nome completo">
+                    <div class="info">Nome da pessoa responsável pelo cadastro</div>
+                </div>
+                
+                <button type="submit" class="btn-submit">✅ REALIZAR CADASTRO</button>
+            </form>
+        </div>
+        
+        <!-- Aba 2: Lista -->
+        <div id="aba1" class="tab-content">
+            <button class="btn-listar" onclick="carregarLista()">🔄 Atualizar Lista</button>
+            
+            <div class="btn-group">
+                <button class="btn-print" onclick="imprimirLista()">🖨️ Imprimir Lista</button>
+                <button class="btn-email" onclick="abrirModalEmail()">📧 Enviar por E-mail</button>
+            </div>
+            
+            <div id="listaEleitores" class="lista-eleitores" style="margin-top: 20px;"></div>
+        </div>
+        
+        <!-- Aba 3: Estatísticas -->
+        <div id="aba2" class="tab-content">
+            <button class="btn-listar" onclick="carregarEstatisticas()">🔄 Atualizar Estatísticas</button>
+            
+            <div class="btn-group">
+                <button class="btn-print" onclick="imprimirEstatisticas()">🖨️ Imprimir Estatísticas</button>
+                <button class="btn-email" onclick="abrirModalEmailEstatisticas()">📧 Enviar Estatísticas por E-mail</button>
+            </div>
+            
+            <div id="estatisticasContent" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+    
+    <!-- Modal de E-mail -->
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📧 Enviar por E-mail</h3>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            
+            <div class="form-group">
+                <label>Para (e-mail):</label>
+                <input type="email" id="emailDestino" placeholder="exemplo@email.com">
+                <div class="info">Separe múltiplos e-mails com vírgula</div>
+            </div>
+            
+            <div class="form-group">
+                <label>Assunto:</label>
+                <input type="text" id="emailAssunto" value="Lista de Eleitores Cadastrados">
+            </div>
+            
+            <div class="form-group">
+                <label>Mensagem (opcional):</label>
+                <textarea id="emailMensagem" rows="3" placeholder="Digite uma mensagem adicional..."></textarea>
+            </div>
+            
+            <div class="email-preview" id="emailPreview">
+                <!-- Preview dos dados será inserido aqui -->
+            </div>
+            
+            <button class="btn-submit" onclick="enviarEmail()" style="margin-top: 10px;">📧 Enviar E-mail</button>
+        </div>
+    </div>
+    
+    <script>
+        // Máscara para telefone
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 11) {
+                value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length >= 7) {
+                value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            } else if (value.length >= 3) {
+                value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+            }
+            e.target.value = value;
+        });
+        
+        // Máscara para CPF
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+        
+        // Máscara para título
+        document.getElementById('titulo').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 12) {
+                value = value.replace(/(\d{4})(\d)/, '$1 $2');
+                value = value.replace(/(\d{4}) (\d{4})(\d)/, '$1 $2 $3');
+            }
+            e.target.value = value;
+        });
+        
+        // Validar CPF
+        function validarCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+            if (cpf.length !== 11) return false;
+            if (/^(\d)\1{10}$/.test(cpf)) return false;
+            
+            let soma = 0;
+            for (let i = 0; i < 9; i++) {
+                soma += parseInt(cpf.charAt(i)) * (10 - i);
+            }
+            let resto = 11 - (soma % 11);
+            let digito1 = resto >= 10 ? 0 : resto;
+            
+            if (digito1 !== parseInt(cpf.charAt(9))) return false;
+            
+            soma = 0;
+            for (let i = 0; i < 10; i++) {
+                soma += parseInt(cpf.charAt(i)) * (11 - i);
+            }
+            resto = 11 - (soma % 11);
+            let digito2 = resto >= 10 ? 0 : resto;
+            
+            return digito2 === parseInt(cpf.charAt(10));
+        }
+        
+        // Validar título
+        function validarTitulo(titulo) {
+            titulo = titulo.replace(/\D/g, '');
+            return titulo.length === 12;
+        }
+        
+        // Verificar se CPF já existe
+        function cpfExiste(cpf, idIgnorar = null) {
+            cpf = cpf.replace(/\D/g, '');
+            const eleitores = JSON.parse(localStorage.getItem('eleitores') || '[]');
+            return eleitores.some(e => e.cpf.replace(/\D/g, '') === cpf && e.id !== idIgnorar);
+        }
+        
+        // Verificar se título já existe
+        function tituloExiste(titulo, idIgnorar = null) {
+            titulo = titulo.replace(/\D/g, '');
+            const eleitores = JSON.parse(localStorage.getItem('eleitores') || '[]');
+            return eleitores.some(e => e.titulo.replace(/\D/g, '') === titulo && e.id !== idIgnorar);
+        }
+        
+        // Salvar cadastro
+        document.getElementById('formCadastro').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nome').value;
+            const endereco = document.getElementById('endereco').value;
+            const telefone = document.getElementById('telefone').value;
+            const cpf = document.getElementById('cpf').value;
+            const titulo = document.getElementById('titulo').value;
+            const cadastrador = document.getElementById('cadastrador').value;
+            
+            // Validar CPF
+            if (!validarCPF(cpf)) {
+                mostrarAlerta('❌ CPF inválido! Digite um CPF válido.', 'error');
+                return;
+            }
+            
+            // Validar título
+            if (!validarTitulo(titulo)) {
+                mostrarAlerta('❌ Título inválido! O título deve ter 12 dígitos.', 'error');
+                return;
+            }
+            
+            // Verificar se CPF já existe
+            if (cpfExiste(cpf)) {
+                mostrarAlerta('❌ Este CPF já está cadastrado!', 'error');
+                return;
+            }
+            
+            // Verificar se título já existe
+            if (tituloExiste(titulo)) {
+                mostrarAlerta('❌ Este título de eleitor já está cadastrado!', 'error');
+                return;
+            }
+            
+            // Salvar dados
+            const dados = {
+                id: Date.now(),
+                nome: nome,
+                endereco: endereco,
+                telefone: telefone,
+                cpf: cpf,
+                titulo: titulo,
+                cadastrador: cadastrador,
+                data: new Date().toLocaleString('pt-BR')
+            };
+            
+            let eleitores = JSON.parse(localStorage.getItem('eleitores') || '[]');
+            eleitores.push(dados);
+            localStorage.setItem('eleitores', JSON.stringify(eleitores));
+            
+            // Mostrar mensagem de sucesso
+            mostrarAlerta('✅ Cadastro realizado com sucesso!', 'success');
+            
+            // Limpar formulário
+            document.getElementById('formCadastro').reset();
+            
+            // Atualizar lista se estiver visível
+            if (document.getElementById('aba1').classList.contains('active')) {
+                carregarLista();
+            }
+        });
+        
+        function mostrarAlerta(mensagem, tipo) {
+            const alert = document.getElementById('alert');
+            alert.textContent = mensagem;
+            alert.className = `alert alert-${tipo === 'success' ? 'success' : 'error'}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Carregar lista de eleitores
+        function carregarLista() {
+            const eleitores = JSON.parse(localStorage.getItem('eleitores') || '[]');
+            const container = document.getElementById('listaEleitores');
+            
+            if (eleitores.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding: 40px;">📋 Nenhum eleitor cadastrado ainda.</p>';
+                return;
+            }
+            
+            let html = '';
+            for (let i = eleitores.length - 1; i >= 0; i--) {
+                const e = eleitores[i];
+                html += `
+                    <div class="card-eleitor">
+                        <h3>👤 ${e.nome}</h3>
+                        <p>📍 ${e.endereco}</p>
+                        <p>📞 ${e.telefone}</p>
+                        <p>🆔 CPF: ${e.cpf}</p>
+                        <p>🎫 Título: ${e.titulo}</p>
+                        <p>👨‍💼 Cadastrado por: ${e.cadastrador}</p>
+                        <p class="data">📅 ${e.data}</p>
+                        <button class="btn-excluir" onclick="excluirEleitor(${e.id})">🗑️ Excluir</button>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // Excluir eleitor
+        function excluirEleitor(id) {
+            if (confirm('Tem certeza que deseja excluir este eleitor?')) {
+                let eleitores = JSON.parse(localStorage.getItem('eleitores') || '[]');
+                eleitores = eleitores.filter(e => e.id !== id);
+                localStorage.setItem('eleitores', JSON.stringify(eleitores));
+                carregarLista();
+                mostrarAlerta('✅ Eleitor removido com sucesso!', 'success');
+            }
+        }
+        
+        // Carregar estatísticas
+        function carregarEstatisticas() {
+            const eleitores = JSON.parse(localStorage.getItem('eleitores') || '[]');
+            const container = document.getElementById('estatisticasContent');
+            
+            if (eleitores.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding: 40px;">📊 Nenhum dado para mostrar.</p>';
+                return;
+            }
+            
+            // Contar por cadastrador
+            const cadastradores = {};
+            for (const e of eleitores) {
+                cadastradores[e.cadastrador] = (cadastradores[e.cadastrador] || 0) + 1;
+            }
+            
+            let html = `
+                <div class="estatisticas">
+                    <p><strong>📊 TOTAL DE ELEITORES:</strong> ${eleitores.length}</p>
+                    <p><strong>📅 Último cadastro:</strong> ${eleitores[eleitores.length-1].data}</p>
+                </div>
+                
+                <h3>👥 CADASTROS POR PESSOA:</h3>
+            `;
+            
+            for (const [nome, qtd] of Object.entries(cadastradores)) {
+                html += `
+                    <div class="card-eleitor">
+                        <h3>👨‍💼 ${nome}</h3>
+                        <p>Cadastrou ${qtd} eleitor(es)</p>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // FUNÇÃO PARA IMPRIMIR
+        function imprimirLista() {
+            const eleitores = JSON.parse(localStorage.getItem('eleitores') || '[]');
+            
+            if (eleitores.length === 0) {
+                mostrarAlerta('❌ Não há eleitores para imprimir!', 'error');
+                return;
+            }
+            
+            let conteudo = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Lista de Eleitores</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            padding: 20px;
+                        }
+                        h1 {
+                            color: #667eea;
+                            text-align: center;
+                        }
+                        .header {
+                            text-align: center;
+                            margin-bottom: 30px;
+                        }
+                        .header p {
+                            color: #666;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 20px;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 10px;
+                            text-align: left;
+                        }
+                        th {
+                            background: #667eea;
+                            color: white;
+                        }
+                        .footer {
+                            margin-top: 30px;
+                            text-align: center;
+                            font-size: 12px;
+                            color: #999;
+                        }
+                        @media print {
+                            body {
+                                margin: 0;
+                                padding: 10px;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>📋 LISTA DE ELEITORES CADASTRADOS</h1>
+                        <p>Data da emissão: ${new Date().toLocaleString('pt-BR')}</p>
+                        <p>Total de eleitores: ${eleitores.length}</p>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nome</th>
+                                <th>Endereço</th>
+                                <th>Telefone</th>
+                                <th>CPF</th>
+                                <th>Título</th>
+                                <th>Cadastrador</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            for (let i = 0; i < eleitores.length; i++) {
+                const e = eleitores[i];
+                conteudo += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>${e.nome}</td>
+                        <td>${e.endereco}</td>
+                        <td>${e.telefone}</td>
+                        <td>${e.cpf}</td>
+                        <td>${e.titulo}</td>
+                        <td>${e.cadastrador}</td>
+                        <td>${e.data}</td>
+                    </tr>
+                `;
+            }
+            
+            conteudo += `
+                        </tbody>
+                    </table>
+                    
+                    <div class="footer">
+                        <p>Documento gerado pelo Sistema de Cadastro de Eleitores</p>
+                        <p>Este documento é uma via de consulta e não tem valor oficial</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            const janelaImpressao = window.open('', '_blank');
+            janelaImpressao.document.write(conteudo);
+            janelaImpressao.document.close();
+            janelaImpressao.print();
+        }
+        
+        function imprimirEstatisticas() {
+            const eleitores = JSON.parse(localStorage.getItem('eleitores') || '[]');
+            
+            if (eleitores.length === 0) {
+                mostrarAlerta('❌ Não há dados para imprimir!', 'error');
+                return;
+            }
+            
+            const cadastradores = {};
+            for (const e of eleitores) {
+                cadastradores[e.cadastrador] = (cadastradores[e.cadastrador] || 0) + 1;
+            }
+            
+            let conteudo = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Estatísticas do Cadastro</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            padding: 20px;
+                        }
+                        h1 {
+                            color: #667eea;
+                            text-align: center;
+                        }
+                        .stats-box {
+                            background: #f5f5f5;
+                            padding: 20px;
+                            border-radius: 10px;
+                            margin: 20px 0;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 20px;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 10px;
+                            text-align: left;
+                        }
+                        th {
+                            background: #667eea;
+                            color: white;
+                        }
+                        .footer {
+                            margin-top: 30px;
+                            text-align: center;
+                            font-size: 12px;
+                            color: #999;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>📊 ESTATÍSTICAS DO CADASTRO DE ELEITORES</h1>
+                    <p style="text-align:center">Gerado em: ${new Date().toLocaleString('pt-BR')}</p>
+                    
+                    <div class="stats-box">
+                        <h3>📈 RESUMO GERAL</h3>
+                        <p><strong>Total de eleitores cadastrados:</strong> ${eleitores.length}</p>
+                        <p><strong>Último cadastro realizado em:</strong> ${eleitores[eleitores.length-1].data}</p>
+                    </div>
+                    
+                    <h3>👥 CADASTROS POR RESPONSÁVEL</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Responsável</th>
+                                <th>Quantidade de Cadastros</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            for (const [nome, qtd] of Object.entries(cadastradores)) {
+                conteudo += `
+                    <tr>
+                        <td>${nome}</td>
+                        <td>${qtd}</td>
+                    </tr>
+                `;
+            }
+            
+            conteudo += `
+                        </tbody>
+                    </table>
+                    
+                    <div class="footer">
+                        <p>Sistema de Cadastro de Eleitores - Dados estatísticos</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            const janelaImpressao = window.open('', '_blank');
+            janelaImpressao.document.write(conteudo);
+            janelaImpressao.document.close();
+            janelaImpressao.print();
+        }
+        
+        // FUNÇÕES DE E-MAIL
+        let dadosParaEnvio = null;
+        let tipoEnvio = null;
+        
+        function abrirModalEmail() {
+            const eleitores = JSON.parse(localStorage.getItem('eleitores') || '[]');
+            
+            if (eleitores.length === 0) {
+                mostrarAlerta('❌ Não há eleitores para enviar!', 'error');
+                return;
+            }
+            
+            tipoEnvio = 'lista';
+            dadosParaEnvio = eleitores;
+            
+            // Criar preview
+            let preview = `📋 LISTA DE ELEITORES CADASTRADOS\n\n`;
+            preview += `Total: ${eleitores.length} eleitores\n`;
+            preview += `Data: ${new Date().toLocaleString('pt-BR')}\n\n`;
+            preview += `═`.repeat(50) + `\n\n`;
+            
+            for (let i = 0; i < eleitores.length; i++) {
+                const e = eleitores[i];
+                preview += `👤 ELEITOR ${i+1}\n`;
+                preview += `Nome: ${e.nome}\n`;
+                preview += `Endereço: ${e.endereco}\n`;
+                preview += `Telefone: ${e.telefone}\n`;
+                preview += `CPF: ${e.cpf}\n`;
+                preview += `Título: ${e.titulo}\n`;
+                preview += `Cadastrador: ${e.cadastrador}\n`;
+                preview += `Data: ${e.data}\n`;
+                preview += `\n` + `-`.repeat(40) + `\n\n`;
+            }
+            
+            document.getElementById('emailPreview').innerHTML = `<pre style="white-space: pre-wrap;">${preview}</pre>`;
+            document.getElementById('emailAssunto').value = `Lista de Eleitores Cadastrados - ${eleitores.length} eleitores`;
+            document.getElementById('emailModal').style.display = 'flex';
+        }
+        
+        function abrirModalEmailEstatisticas() {
+            const eleitores = JSON.parse(localStorage.getItem('eleitores') || '[]');
+            
+            if (eleitores.length === 0) {
+                mostrarAlerta('❌ Não há dados para enviar!', 'error');
+                return;
+            }
+            
+            tipoEnvio = 'estatisticas';
+            dadosParaEnvio = eleitores;
+            
+            const cadastradores = {};
+            for (const e of eleitores) {
+                cadastradores[e.cadastrador] = (cadastradores[e.cadastrador] || 0) + 1;
+            }
+            
+            let preview = `📊 ESTATÍSTICAS DO CADASTRO DE ELEITORES\n\n`;
+            preview += `Gerado em: ${new Date().toLocaleString('pt-BR')}\n`;
+            preview += `═`.repeat(50) + `\n\n`;
+            preview += `📈 RESUMO GERAL\n`;
+            preview += `Total de eleitores cadastrados: ${eleitores.length}\n`;
+            preview += `Último cadastro: ${eleitores[eleitores.length-1].data}\n\n`;
+            preview += `═`.repeat(50) + `\n\n`;
+            preview += `👥 CADASTROS POR RESPONSÁVEL\n\n`;
+            
+            for (const [nome, qtd] of Object.entries(cadastradores)) {
+                preview += `${nome}: ${qtd} eleitor(es)\n`;
+            }
+            
+            document.getElementById('emailPreview').innerHTML = `<pre style="white-space: pre-wrap;">${preview}</pre>`;
+            document.getElementById('emailAssunto').value = `Estatísticas do Cadastro de Eleitores - ${eleitores.length} eleitores`;
+            document.getElementById('emailModal').style.display = 'flex';
+        }
+        
+        function fecharModal() {
+            document.getElementById('emailModal').style.display = 'none';
+            document.getElementById('emailDestino').value = '';
+            document.getElementById('emailMensagem').value = '';
+        }
+        
+        function enviarEmail() {
+            const destino = document.getElementById('emailDestino').value;
+            const assunto = document.getElementById('emailAssunto').value;
+            const mensagemAdicional = document.getElementById('emailMensagem').value;
+            
+            if (!destino) {
+                mostrarAlerta('❌ Digite um e-mail de destino!', 'error');
+                return;
+            }
+            
+            // Construir corpo do e-mail
+            let corpo = '';
+            
+            if (mensagemAdicional) {
+                corpo += mensagemAdicional + '\n\n';
+                corpo += `═`.repeat(50) + `\n\n`;
+            }
+            
+            if (tipoEnvio === 'lista') {
+                corpo += `📋 LISTA DE ELEITORES CADASTRADOS\n\n`;
+                corpo += `Total: ${dadosParaEnvio.length} eleitores\n`;
+                corpo += `Data: ${new Date().toLocaleString('pt-BR')}\n\n`;
+                corpo += `═`.repeat(50) + `\n\n`;
+                
+                for (let i = 0; i < dadosParaEnvio.length; i++) {
+                    const e = dadosParaEnvio[i];
+                    corpo += `👤 ELEITOR ${i+1}\n`;
+                    corpo += `Nome: ${e.nome}\n`;
+                    corpo += `Endereço: ${e.endereco}\n`;
+                    corpo += `Telefone: ${e.telefone}\n`;
+                    corpo += `CPF: ${e.cpf}\n`;
+                    corpo += `Título: ${e.titulo}\n`;
+                    corpo += `Cadastrador: ${e.cadastrador}\n`;
+                    corpo += `Data: ${e.data}\n`;
+                    corpo += `\n` + `-`.repeat(40) + `\n\n`;
+                }
+            } else if (tipoEnvio === 'estatisticas') {
+                const cadastradores = {};
+                for (const e of dadosParaEnvio) {
+                    cadastradores[e.cadastrador] = (cadastradores[e.cadastrador] || 0) + 1;
+                }
+                
+                corpo += `📊 ESTATÍSTICAS DO CADASTRO DE ELEITORES\n\n`;
+                corpo += `Gerado em: ${new Date().toLocaleString('pt-BR')}\n`;
+                corpo += `═`.repeat(50) + `\n\n`;
+                corpo += `📈 RESUMO GERAL\n`;
+                corpo += `Total de eleitores cadastrados: ${dadosParaEnvio.length}\n`;
+                corpo += `Último cadastro: ${dadosParaEnvio[dadosParaEnvio.length-1].data}\n\n`;
+                corpo += `═`.repeat(50) + `\n\n`;
+                corpo += `👥 CADASTROS POR RESPONSÁVEL\n\n`;
+                
+                for (const [nome, qtd] of Object.entries(cadastradores)) {
+                    corpo += `${nome}: ${qtd} eleitor(es)\n`;
+                }
+            }
+            
+            corpo += `\n\n═`.repeat(50) + `\n`;
+            corpo += `Sistema de Cadastro de Eleitores\n`;
+            corpo += `Documento gerado automaticamente em ${new Date().toLocaleString('pt-BR')}`;
+            
+            // Criar link mailto
+            const link = document.createElement('a');
+            link.href = `mailto:${destino}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+            link.click();
+            
+            fecharModal();
+            mostrarAlerta('✅ Seu cliente de e-mail foi aberto! Verifique e envie a mensagem.', 'success');
+        }
+        
+        // Fechar modal clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('emailModal');
+            if (event.target === modal) {
+                fecharModal();
+            }
+        }
+        
+        // Mudar de aba
+        function mudarAba(aba) {
+            // Esconder todas as abas
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remover active de todas as tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mostrar aba selecionada
+            document.getElementById(`aba${aba}`).classList.add('active');
+            document.querySelectorAll('.tab')[aba].classList.add('active');
+            
+            // Carregar dados se necessário
+            if (aba === 1) {
+                carregarLista();
+            } else if (aba === 2) {
+                carregarEstatisticas();
+            }
+        }
+        
+        // Carregar dados iniciais
+        carregarLista();
+    </script>
+</body>
+</html>
